@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVING IN SPACE - Web PPT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: black;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .slide-content {
+            container mx-auto px-6 md:px-12;
+            h-full flex flex-col justify-center items-center text-center relative z-10;
+            width: 100%;
+            max-width: 1400px;
+            padding: 2rem;
+        }
+        
+        .gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+        }
+        
+        .glow-orange {
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+        }
+        
+        .text-glow {
+            text-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+        }
+        
+        .highlight {
+            color: #f97316;
+            font-weight: 900;
+            text-decoration: underline;
+            text-decoration-color: rgba(249, 115, 22, 0.5);
+            text-decoration-thickness: 4px;
+            text-underline-offset: 4px;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .nav-dot:hover {
+            transform: scale(1.2);
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .nav-dot.active {
+            background: rgba(249, 115, 22, 0.6);
+            transform: scale(0.75);
+        }
+        
+        .nav-dot.active::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: monospace;
+            color: rgba(249, 115, 22, 0.8);
+            white-space: nowrap;
+            opacity: 1;
+        }
+        
+        .nav-dot:not(.active)::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: monospace;
+            color: rgba(249, 115, 22, 0.8);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .nav-dot:hover::before {
+            opacity: 1;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: rgba(249, 115, 22, 0.6);
+            transition: width 0.3s ease;
+        }
+        
+        .fact-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        
+        .fact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #f97316;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
+        }
+        
+        .vocab-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .vocab-word {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #f97316;
+        }
+        
+        .blank {
+            display: inline-block;
+            border-bottom: 4px solid #4b5563;
+            min-width: 140px;
+            margin: 0 8px;
+            color: transparent;
+            transition: all 0.5s ease;
+        }
+        
+        .blank.filled {
+            border-color: #f97316;
+            color: #f97316;
+            font-weight: 900;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .step {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <script>
+        const slides = [
+            {
+                id: 1,
+                bg: 'images/slide1.png',
+                layout: 'title',
+                title: 'LIVING IN SPACE',
+                subtitle: "Humanity's Journey to the Stars",
+                footer: 'Pre-reading Module',
+                steps: 3
+            },
+            {
+                id: 2,
+                bg: 'images/slide2.png',
+                layout: 'questions',
+                header: 'Think and Share',
+                questions: [
+                    'If you were offered a one-way ticket to live on Mars, would you take it? Why or why not?',
+                    'What are the biggest challenges humans might face when living on another planet?'
+                ],
+                steps: 3
+            },
+            {
+                id: 3,
+                bg: 'images/slide3.png',
+                layout: 'facts',
+                header: "Earth's Closest Neighbor",
+                subHeader: 'Our First Stop: The Moon',
+                facts: [
+                    { label: 'The Moon', text: 'It is the only place beyond Earth where humans have actually set foot.' },
+                    { label: 'Distance', text: 'It takes about three days to travel from Earth to the Moon.' },
+                    { label: 'Gateway', text: 'Scientists see the Moon as a "stepping stone" for deeper space exploration.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 4,
+                bg: 'images/slide4.png',
+                layout: 'facts',
+                header: 'The Red Frontier',
+                subHeader: 'Why Mars?',
+                facts: [
+                    { label: 'Environment', text: "Mars has a thin atmosphere and is much colder than Earth, but it's the most livable planet nearby." },
+                    { label: 'Water', text: 'Evidence suggests Mars once had liquid water, which is essential for life.' },
+                    { label: 'The Dream', text: 'Visionaries like Elon Musk want to build a self-sustaining city of a million people there.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 5,
+                bg: 'images/slide5.png',
+                layout: 'predict',
+                header: 'Look and Predict',
+                task: 'Look at the title "Living in Space" and discuss with a partner:',
+                prompts: [
+                    'Do you think living in space is a necessity for human survival or just a dream?',
+                    'Which famous scientist do you think the article will mention?',
+                    'What kind of "concerns" or problems might the author discuss regarding space travel?'
+                ],
+                steps: 3
+            },
+            {
+                id: 6,
+                bg: 'images/slide6.png',
+                layout: 'qa',
+                header: "Hawking's Vision",
+                icon: '🔍',
+                question: 'What did Stephen Hawking believe humans must do to ensure our future is safe?',
+                answer: 'He believed that we need to spread out into space and <span class="highlight">establish independent colonies</span>.',
+                vocab: [
+                    { word: 'establish independent colonies', def: 'To create self-governing communities in a new place.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 7,
+                bg: 'images/slide7.png',
+                layout: 'qa',
+                header: 'Stepping Stone: The Moon',
+                icon: '🌍',
+                question: 'Why are several countries planning to build space stations on the Moon?',
+                answer: 'These stations will <span class="highlight">prepare humans to</span> visit and later live on Mars or other planets.',
+                vocab: [
+                    { word: 'prepare sb to do', def: 'To get someone ready for a future activity.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 8,
+                bg: 'images/slide8.png',
+                layout: 'qa',
+                header: 'Colonizing the Red Planet',
+                icon: '📚',
+                question: 'Why does Robert Zubrin think humans should colonize Mars?',
+                answer: 'He believes it will show if humans can survive in a very different <span class="highlight">environment</span> and create new societies.',
+                vocab: [
+                    { word: 'colonize', def: 'To send people to live in and take control of a new area.' },
+                    { word: 'environment', def: 'The natural conditions in which a person or animal lives.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 9,
+                bg: 'images/slide9.png',
+                layout: 'qa',
+                header: 'Benefits for Earth',
+                icon: '⚡',
+                question: 'How will space exploration help the people who stay on Earth?',
+                answer: 'Scientific <span class="highlight">advances</span> in medicine and technology made in space will <span class="highlight">benefit</span> people here at home.',
+                vocab: [
+                    { word: 'advances', def: 'Improvements or developments in something.' },
+                    { word: 'benefit', def: 'To be useful or helpful to someone.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 10,
+                bg: 'images/slide10.png',
+                layout: 'qa',
+                header: 'A Million-Person Goal',
+                icon: '🧭',
+                question: "What is Elon Musk's long-term goal for Mars?",
+                answer: 'He wants to put one million people on the planet instead of sending just "one little <span class="highlight">mission</span>."',
+                vocab: [
+                    { word: 'long-term goal', def: 'Something you want to achieve over a long period of time.' },
+                    { word: 'mission', def: 'A specific task or journey into space.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 11,
+                bg: 'images/slide11.png',
+                layout: 'qa',
+                header: 'Backup Plan & High Costs',
+                icon: '🛡️',
+                question: 'Why does SpaceX want to move people to Mars, and what is one major argument against it?',
+                answer: 'They want a backup <span class="highlight">in case</span> something bad happens on Earth. <span class="highlight">In addition</span>, many people say it is too expensive.',
+                vocab: [
+                    { word: 'in case', def: 'Because of the possibility of something happening.' },
+                    { word: 'In addition', def: 'Used to add another piece of information.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 12,
+                bg: 'images/slide12.png',
+                layout: 'qa',
+                header: 'Dangerous Conditions',
+                icon: '⚠️',
+                question: "What physical dangers would humans face on the Moon's surface?",
+                answer: "The sun's <span class=\"highlight\">rays</span> are extremely dangerous, so people would have to stay indoors most of the time.",
+                vocab: [
+                    { word: 'surface', def: 'The outside or top layer of something.' },
+                    { word: 'rays', def: 'Narrow beams of energy from the sun.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 13,
+                bg: 'images/slide13.png',
+                layout: 'qa',
+                header: 'Certainty & New Cultures',
+                icon: '💬',
+                question: 'Despite these concerns, what does the author predict for the future?',
+                answer: 'Sending people into space seems certain, and we might see new human <span class="highlight">cultures</span> on other planets.',
+                vocab: [
+                    { word: 'concerns', def: 'Worries or doubts about a situation.' },
+                    { word: 'cultures', def: 'The ideas and social behavior of a group of people.' }
+                ],
+                steps: 4
+            },
+            {
+                id: 14,
+                bg: 'images/slide14.png',
+                layout: 'vocabCheck',
+                header: 'Vocabulary Checkpoint 1',
+                vocabList: [
+                    { icon: '🏘️', zh: '建立独立殖民地', en: 'establish independent colonies' },
+                    { icon: '🎓', zh: '准备做...', en: 'prepare sb to do' },
+                    { icon: '🚩', zh: '殖民/开拓', en: 'colonize' },
+                    { icon: '🌍', zh: '环境', en: 'environment' },
+                    { icon: '📈', zh: '进步/进展', en: 'advances' },
+                    { icon: '🎁', zh: '获益/对...有益', en: 'benefit' }
+                ],
+                steps: 7
+            },
+            {
+                id: 15,
+                bg: 'images/slide15.png',
+                layout: 'vocabCheck',
+                header: 'Vocabulary Checkpoint 2',
+                vocabList: [
+                    { icon: '🚀', zh: '任务/使命', en: 'mission' },
+                    { icon: '🎯', zh: '长期目标', en: 'long-term goal' },
+                    { icon: '🛡️', zh: '以防/万一', en: 'in case' },
+                    { icon: '➕', zh: '此外/而且', en: 'In addition' },
+                    { icon: '🌑', zh: '表面', en: 'surface' },
+                    { icon: '❓', zh: '担忧/顾虑', en: 'concerns' },
+                    { icon: '🎭', zh: '文化', en: 'cultures' },
+                    { icon: '☀️', zh: '射线/光线', en: 'rays' }
+                ],
+                steps: 9
+            },
+            {
+                id: 16,
+                bg: 'images/slide16.png',
+                layout: 'fillBlanks',
+                header: 'Practice: The Future in Space',
+                instruction: 'Fill in the blanks using the correct form of the words from the box.',
+                wordBank: ['colonize', 'environment', 'advances', 'benefit', 'long-term goal', 'in case', 'surface', 'concerns'],
+                blanks: [
+                    'Many scientists believe we should (1) [colonize] other planets to ensure human survival.',
+                    'Although the space (2) [environment] is harsh, technical (3) [advances] will help us live there.',
+                    'This work will (4) [benefit] everyone on Earth.',
+                    "Elon Musk's (5) [long-term goal] is to build a city on Mars (6) [in case] something happens to Earth.",
+                    'However, we must survive on the dangerous (7) [surface] of the moon first.',
+                    'Despite these (8) [concerns], space exploration continues.'
+                ],
+                steps: 9
+            },
+            {
+                id: 17,
+                bg: 'images/slide17.png',
+                layout: 'discussion',
+                header: 'Beyond the Stars',
+                icon: '💬',
+                questions: [
+                    { q: "If we build a city on Mars, should we keep Earth's laws or create a whole new system?", icon: '🛡️' },
+                    { q: "Do you think spending billions on space is better than spending it on fixing problems on Earth?", icon: '🌍' }
+                ],
+                steps: 3
+            },
+            {
+                id: 18,
+                bg: 'images/slide18.png',
+                layout: 'summary',
+                header: 'Summary: The Final Frontier',
+                points: [
+                    { title: 'Survival', text: 'Expanding into space is an essential backup plan for humanity.', icon: '✅' },
+                    { title: 'Progress', text: 'Space technology brings major medical and technical benefits to Earth.', icon: '🔬' },
+                    { title: 'Challenges', text: 'High costs and dangerous environments remain our biggest hurdles.', icon: '⚡' }
+                ],
+                closing: "Space is for everybody. It's our new frontier out there.",
+                steps: 5
+            }
+        ];
+
+        let currentSlide = 0;
+        let currentStep = 0;
+
+        function renderSlide(slide, step) {
+            let html = `<div class="slide active" style="background-image: url('${slide.bg}');">`;
+            html += '<div class="gradient-overlay"></div>';
+            html += '<div class="slide-content">';
+            
+            if (slide.layout === 'title') {
+                if (step >= 1) {
+                    html += `<div class="step visible relative group" style="transition-delay: 0.1s;">`;
+                    html += `<div class="absolute -inset-1 bg-gradient-to-r from-orange-500 to-red-600 rounded-3xl blur opacity-30"></div>`;
+                    html += `<div class="relative px-8 py-12 md:px-20 md:py-24 bg-black/50 backdrop-blur-3xl rounded-3xl border border-white/10 ring-1 ring-white/20">`;
+                    html += `<h1 class="text-6xl md:text-9xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400 mb-6">${slide.title}</h1>`;
+                    if (step >= 2) {
+                        html += `<div class="h-1 w-24 bg-orange-500 mx-auto mb-8"></div>`;
+                        html += `<p class="text-xl md:text-3xl font-medium text-orange-400/90 uppercase tracking-[0.3em] mb-12">${slide.subtitle}</p>`;
+                    }
+                    if (step >= 3) {
+                        html += `<div class="inline-flex items-center gap-2 px-6 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold tracking-[0.2em] text-gray-400 uppercase">`;
+                        html += `<span class="text-orange-500">ℹ</span> ${slide.footer}`;
+                        html += `</div>`;
+                    }
+                    html += `</div></div>`;
+                }
+            }
+            
+            else if (slide.layout === 'questions') {
+                if (step >= 1) {
+                    html += `<h2 class="step visible text-5xl md:text-6xl font-black tracking-tight text-white mb-12 flex items-center gap-4" style="transition-delay: 0.1s;">`;
+                    html += `<span class="text-orange-400 text-3xl">👥</span> ${slide.header}</h2>`;
+                    html += `<div class="grid gap-6">`;
+                    slide.questions.forEach((q, i) => {
+                        if (step >= i + 2) {
+                            html += `<div class="step visible relative bg-white/5 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-2xl" style="transition-delay: ${(i + 2) * 0.2}s;">`;
+                            html += `<p class="text-2xl italic text-gray-200">"${q}"</p>`;
+                            html += `</div>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+            }
+            
+            else if (slide.layout === 'facts') {
+                if (step >= 1) {
+                    html += `<div class="step visible mb-12" style="transition-delay: 0.1s;">`;
+                    html += `<span class="text-orange-500 font-bold tracking-[0.3em] uppercase text-sm mb-2 block">${slide.subHeader}</span>`;
+                    html += `<h2 class="text-5xl md:text-7xl font-black tracking-tighter">${slide.header}</h2>`;
+                    html += `</div>`;
+                    html += `<div class="grid md:grid-cols-3 gap-6">`;
+                    slide.facts.forEach((f, i) => {
+                        if (step >= i + 2) {
+                            html += `<div class="step visible fact-card" style="transition-delay: ${(i + 2) * 0.2}s;">`;
+                            html += `<span class="text-xs font-black text-orange-400 uppercase tracking-widest mb-6 block opacity-70">${f.label}</span>`;
+                            html += `<p class="text-xl md:text-2xl font-medium leading-snug text-gray-100">${f.text}</p>`;
+                            html += `</div>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+            }
+            
+            else if (slide.layout === 'qa') {
+                if (step >= 1) {
+                    html += `<h2 class="step visible text-5xl md:text-7xl font-black tracking-tighter text-white mb-12 flex items-center gap-6" style="transition-delay: 0.1s;">`;
+                    html += `<div class="p-4 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md text-3xl">${slide.icon}</div>`;
+                    html += `${slide.header}</h2>`;
+                    html += `<div class="space-y-8">`;
+                    if (step >= 2) {
+                        html += `<div class="step visible p-8 md:p-12 bg-white/5 backdrop-blur-3xl rounded-[40px] border border-white/10 shadow-xl" style="transition-delay: 0.2s;">`;
+                        html += `<p class="text-3xl md:text-4xl font-light text-white leading-tight">${slide.question}</p>`;
+                        html += `</div>`;
+                    }
+                    if (step >= 3) {
+                        html += `<div class="step visible p-8 md:p-12 bg-orange-500/10 backdrop-blur-3xl rounded-[40px] border border-orange-500/20 shadow-orange-500/5 shadow-2xl" style="transition-delay: 0.3s;">`;
+                        html += `<p class="text-2xl md:text-3xl font-medium text-gray-100 leading-relaxed">${slide.answer}</p>`;
+                        html += `</div>`;
+                    }
+                    if (step >= 4 && slide.vocab) {
+                        html += `<div class="step visible p-10 bg-black/40 backdrop-blur-2xl rounded-[32px] border border-white/10 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 text-left" style="transition-delay: 0.4s;">`;
+                        slide.vocab.forEach(v => {
+                            html += `<div class="flex flex-col gap-2">`;
+                            html += `<span class="vocab-word">${v.word}</span>`;
+                            html += `<span class="text-gray-300 text-xl leading-snug">${v.def}</span>`;
+                            html += `</div>`;
+                        });
+                        html += `</div>`;
+                    }
+                    html += `</div>`;
+                }
+            }
+            
+            else if (slide.layout === 'vocabCheck') {
+                if (step >= 1) {
+                    html += `<h2 class="step visible text-5xl md:text-7xl font-black mb-16 tracking-tighter text-orange-400" style="transition-delay: 0.1s;">`;
+                    html += `${slide.header}</h2>`;
+                    html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">`;
+                    slide.vocabList.forEach((item, i) => {
+                        if (step >= i + 2) {
+                            html += `<div class="step visible vocab-card" style="transition-delay: ${(i + 2) * 0.15}s;">`;
+                            html += `<span class="text-4xl">${item.icon}</span>`;
+                            html += `<div class="flex-1 flex justify-between items-center pr-4 border-l border-white/10 pl-6">`;
+                            html += `<span class="text-2xl text-gray-400 font-medium">${item.zh}</span>`;
+                            html += `<span class="text-4xl font-black text-orange-400 tracking-tight text-glow">${item.en}</span>`;
+                            html += `</div>`;
+                            html += `</div>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+            }
+            
+            else if (slide.layout === 'fillBlanks') {
+                if (step >= 1) {
+                    html += `<div class="step visible mb-12" style="transition-delay: 0.1s;">`;
+                    html += `<h2 class="text-5xl font-black mb-4">${slide.header}</h2>`;
+                    html += `<p class="text-orange-400 font-bold uppercase tracking-widest text-sm mb-6">${slide.instruction}</p>`;
+                    html += `<div class="flex flex-wrap gap-4 p-8 bg-white/5 rounded-2xl border border-white/10 mb-8 backdrop-blur-sm shadow-xl">`;
+                    html += `<span class="text-gray-400 font-bold mr-4 text-xl">Word Bank:</span>`;
+                    slide.wordBank.forEach((word, i) => {
+                        html += `<span class="px-6 py-3 bg-orange-500/10 border border-orange-500/30 rounded-xl text-orange-400 font-black text-2xl tracking-wide">${word}${i < slide.wordBank.length - 1 ? ' / ' : ''}</span>`;
+                    });
+                    html += `</div>`;
+                    html += `</div>`;
+                    if (step >= 1) {
+                        html += `<div class="step visible bg-white/5 backdrop-blur-3xl p-12 rounded-[40px] border border-white/10 shadow-2xl" style="transition-delay: 0.2s;">`;
+                        html += `<p class="text-3xl md:text-4xl font-light leading-relaxed text-gray-200">`;
+                        slide.blanks.forEach((blank, i) => {
+                            const isFilled = step >= i + 2;
+                            const match = blank.match(/\[(.*?)\]/);
+                            const answer = match ? match[1] : '';
+                            const displayBlank = blank.replace(/\[(.*?)\]/, `<span class="blank ${isFilled ? 'filled' : ''}">${isFilled ? answer : ''}</span>`);
+                            html += `${displayBlank}<br><br>`;
+                        });
+                        html += `</p>`;
+                        html += `</div>`;
+                    }
+                }
+            }
+            
+            else if (slide.layout === 'predict') {
+                if (step >= 1) {
+                    html += `<h2 class="step visible text-6xl md:text-8xl font-black italic tracking-tighter bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent mb-12 flex items-center gap-6" style="transition-delay: 0.1s;">`;
+                    html += `<span class="text-orange-400 text-5xl">💡</span> ${slide.header}</h2>`;
+                    html += `<div class="grid md:grid-cols-2 gap-8 items-center">`;
+                    if (step >= 2) {
+                        html += `<div class="step visible bg-white/5 backdrop-blur-2xl p-10 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden" style="transition-delay: 0.2s;">`;
+                        html += `<p class="text-3xl font-light text-orange-50 leading-tight mb-0">${slide.task}</p>`;
+                        html += `</div>`;
+                    }
+                    if (step >= 3) {
+                        html += `<ul class="space-y-4">`;
+                        slide.prompts.forEach((p, i) => {
+                            html += `<li class="step visible flex items-center gap-6 p-5 bg-white/5 rounded-2xl border border-white/5 shadow-md" style="transition-delay: ${(i + 3) * 0.15}s;">`;
+                            html += `<span class="flex-shrink-0 w-10 h-10 rounded-full bg-orange-500/20 border border-orange-500/40 flex items-center justify-center font-black text-orange-400">${i + 1}</span>`;
+                            html += `<p class="text-xl font-medium text-gray-200">${p}</p>`;
+                            html += `</li>`;
+                        });
+                        html += `</ul>`;
+                    }
+                    html += `</div>`;
+                }
+            }
+            
+            else if (slide.layout === 'discussion') {
+                if (step >= 1) {
+                    html += `<h2 class="step visible text-5xl md:text-8xl font-black mb-16 tracking-tighter flex items-center gap-6" style="transition-delay: 0.1s;">`;
+                    html += `<span class="text-5xl">${slide.icon}</span> ${slide.header}</h2>`;
+                    html += `<div class="space-y-8">`;
+                    slide.questions.forEach((q, i) => {
+                        if (step >= i + 2) {
+                            html += `<div class="step visible p-10 bg-white/5 backdrop-blur-2xl rounded-[40px] border border-white/10 flex gap-8 items-start shadow-xl" style="transition-delay: ${(i + 2) * 0.2}s;">`;
+                            html += `<div class="p-4 bg-white/5 rounded-2xl text-3xl">${q.icon}</div>`;
+                            html += `<p class="text-3xl font-light leading-tight text-white">${q.q}</p>`;
+                            html += `</div>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+            }
+            
+            else if (slide.layout === 'summary') {
+                if (step >= 1) {
+                    html += `<h2 class="step visible text-6xl md:text-8xl font-black mb-16 tracking-tighter bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent" style="transition-delay: 0.1s;">`;
+                    html += `${slide.header}</h2>`;
+                    html += `<div class="grid gap-6 mb-16">`;
+                    slide.points.forEach((p, i) => {
+                        if (step >= i + 2) {
+                            html += `<div class="step visible flex gap-6 items-center p-8 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-xl" style="transition-delay: ${(i + 2) * 0.2}s;">`;
+                            html += `<div class="p-3 bg-white/5 rounded-2xl text-3xl">${p.icon}</div>`;
+                            html += `<div>`;
+                            html += `<h3 class="text-2xl font-black text-orange-400 uppercase tracking-widest">${p.title}</h3>`;
+                            html += `<p class="text-xl text-gray-300">${p.text}</p>`;
+                            html += `</div>`;
+                            html += `</div>`;
+                        }
+                    });
+                    html += `</div>`;
+                    if (step >= 5) {
+                        html += `<div class="step visible text-center" style="transition-delay: 0.5s;">`;
+                        html += `<p class="text-3xl font-black italic text-orange-400 text-glow px-8 py-4 bg-orange-500/10 border border-orange-500/30 rounded-full inline-block">${slide.closing}</p>`;
+                        html += `</div>`;
+                    }
+                }
+            }
+            
+            html += '</div>';
+            
+            // Progress bar
+            html += `<div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-1/4 z-50 px-4 group opacity-40 hover:opacity-100 transition-opacity duration-500">`;
+            html += `<div class="progress-bar backdrop-blur-sm border border-white/5">`;
+            html += `<div class="progress-fill" style="width: ${(currentSlide / (slides.length - 1)) * 100}%"></div>`;
+            html += `</div>`;
+            html += `<div class="absolute top-1/2 -translate-y-1/2 left-0 w-full flex justify-between px-0">`;
+            slides.forEach((_, i) => {
+                html += `<button class="nav-dot ${i <= currentSlide ? 'active' : ''}" data-tooltip="P.${i + 1}" onclick="goToSlide(${i})"></button>`;
+            });
+            html += `</div>`;
+            html += `</div>`;
+            
+            // Navigation buttons
+            html += `<div class="absolute bottom-12 left-12 z-50">`;
+            html += `<button onclick="prev()" class="group relative p-5 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-2xl border border-white/10 transition-all hover:scale-110 active:scale-95 shadow-2xl">`;
+            html += `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 group-hover:text-orange-400 transition-colors"><path d="m15 18-6-6 6-6"></path></svg>`;
+            html += `</button>`;
+            html += `</div>`;
+            html += `<div class="absolute bottom-12 right-12 z-50">`;
+            html += `<button onclick="next()" class="group relative p-5 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-2xl border border-white/10 transition-all hover:scale-110 active:scale-95 shadow-2xl">`;
+            html += `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 group-hover:text-orange-400 transition-colors"><path d="m9 18 6-6-6-6"></path></svg>`;
+            html += `</button>`;
+            html += `</div>`;
+            
+            // Header info
+            html += `<div class="absolute top-8 left-12 flex items-center gap-4 text-xs font-bold tracking-[0.4em] text-orange-500/60 uppercase">`;
+            html += `<div class="w-12 h-[1px] bg-orange-500/40"></div> Exploration Mode`;
+            html += `</div>`;
+            html += `<div class="absolute top-8 right-12 text-sm font-mono tracking-[0.3em] text-white/30">`;
+            html += `<span class="text-orange-500/60 font-black">${String(currentSlide + 1).padStart(2, '0')}</span> / ${slides.length}`;
+            html += `<span class="ml-4 text-[10px] text-orange-500/40 uppercase">Step ${step} / ${slides[currentSlide].steps}</span>`;
+            html += `</div>`;
+            
+            html += '</div>';
+            return html;
+        }
+
+        function update() {
+            const slide = slides[currentSlide];
+            document.getElementById('app').innerHTML = renderSlide(slide, currentStep);
+        }
+
+        function next() {
+            const slide = slides[currentSlide];
+            if (currentStep < slide.steps) {
+                currentStep++;
+            } else if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                currentStep = 0;
+            }
+            update();
+        }
+
+        function prev() {
+            if (currentStep > 0) {
+                currentStep--;
+            } else if (currentSlide > 0) {
+                const prevSlide = slides[currentSlide - 1];
+                currentSlide--;
+                currentStep = prevSlide.steps;
+            }
+            update();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            currentStep = 0;
+            update();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') next();
+            if (e.key === 'ArrowLeft' || e.key === 'Backspace') prev();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('button')) next();
+        });
+
+        update();
+    </script>
+</body>
+</html>
