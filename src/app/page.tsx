@@ -390,7 +390,7 @@ const slides: Slide[] = [
     bg: '/images/slide16.png',
     header: 'Practice: The Future in Space',
     instruction: 'Fill in the blanks using the correct form of the words from the box.',
-    wordBank: ['colonize', 'environment', 'advances', 'benefit', 'long-term goal', 'in case', 'surface', 'concerns'],
+    wordBank: ['benefit', 'concerns', 'surface', 'colonize', 'advances', 'long-term goal', 'environment', 'in case'],
     layout: 'fillBlanks',
     steps: 9,
     colorTheme: 'emerald'
